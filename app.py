@@ -1,3 +1,4 @@
+# New code avec de news fonctionalitées
 from redis import Redis
 import os
 import json
@@ -30,7 +31,13 @@ app = Flask(__name__)
 CORS(app, origins=["https://mon-frontend.com"])  # Restriction des accès
 
 # Protection contre l'abus d'API
-limiter = Limiter(get_remote_address, app=app, default_limits=["10 per minute"])
+# limiter = Limiter(get_remote_address, app=app, default_limits=["10 per minute"])
+
+limiter = Limiter(key_func=get_remote_address, storage_uri="redis://redis:6379/0")
+limiter.init_app(app)
+
+# limiter = Limiter(get_remote_address, app=app, key_func=get_remote_address, storage_uri="redis://redis:6379/0")
+
 
 # Chargement des clés API
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
